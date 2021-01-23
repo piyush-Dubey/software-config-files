@@ -21,6 +21,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-agenda-files (quote ("~/projects/frequently-forgotten-parts/todo.org")))
  '(package-selected-packages
    (quote
     (rust-mode flycheck-rust htmlize flycheck-clang-tidy flycheck))))
@@ -42,5 +43,16 @@
 (org-babel-do-load-languages
  'org-babel-load-languages '((C . t)))
 
+;; Disable the splash screen (to enable it agin, replace the t with 0)
+(setq inhibit-splash-screen t)
+;; Enable transient mark mode
+(transient-mark-mode 1)
+;;;;Org mode configuration
+;; Enable Org mode
+(require 'org)
+
+(setq org-todo-keywords
+  '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE")))
+(global-set-key "\C-ca" 'org-agenda)
 (provide 'init)
 ;;; init.el ends here
