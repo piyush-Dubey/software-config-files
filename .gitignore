@@ -2,3 +2,4 @@ emacs.d/elpa
 *~
 *.elc
 emacs.d/.emacs.d
+emacs.d/irony/
