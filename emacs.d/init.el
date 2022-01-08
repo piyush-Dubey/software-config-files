@@ -5,10 +5,10 @@
 ;;; Code:
 
 (require 'package)
-;; (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 ;; Comment/uncomment this line to enable MELPA Stable if desired.  See `package-archive-priorities`
 ;; and `package-pinned-packages`. Most users will not need or want to do this.
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+;; (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
 
@@ -29,7 +29,7 @@
  '(org-agenda-files (quote ("~/projects/frequently-forgotten-parts/todo.org")))
  '(package-selected-packages
    (quote
-    (lsp-ui company pyvenv lsp-python-ms posframe dap-mode company-irony rust-mode flycheck-rust htmlize flycheck-clang-tidy flycheck))))
+    (pip-requirements rustic magit lsp-ui yasnippet lsp-metals sbt-mode use-package ein ## pyvenv posframe dap-mode company-irony htmlize flycheck))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -37,68 +37,49 @@
  ;; If there is more than one, they won't work right.
  )
 
-(require 'company)
-(require 'rust-mode)
-(load "~/projects/llvm-project/clang/tools/clang-format/clang-format.el")
-(require 'clang-format)
-(global-set-key [C-iso-lefttab] 'clang-format-region)
-(setq company-idle-delay 0)
-(setq company-minimum-prefix-length 1)
-(setq company-selection-wrap-around t)
+;; Install use-package if not already installed
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-(add-hook 'after-init-hook 'global-company-mode)
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
+(require 'use-package)
 
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
-(eval-after-load 'flycheck
-  '(add-hook 'flycheck-mode-hook #'flycheck-clang-tidy-setup))
-
-(with-eval-after-load 'rust-mode
-  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
-
-;; (add-hook 'after-init-hook #'global-flycheck-mode)
-(global-flycheck-mode)
-
-(org-babel-do-load-languages
- 'org-babel-load-languages '(
-			     (C . t)
-			     (shell . t)
-			     (python . t)
-			     (ditaa . t)
-			     ))
-(setq org-ditaa-jar-path "/usr/bin/ditaa")
-
-;; Disable the splash screen (to enable it again, replace the t with 0)
-(setq inhibit-splash-screen t)
-;; Enable transient mark mode
-(transient-mark-mode 1)
-;;;;Org mode configuration
-;; Enable Org mode
+(global-visual-line-mode)
+(global-display-line-numbers-mode)
 
 
-;; ========= org mode ==========
-(require 'org)
-
-(setq org-todo-keywords
-  '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE")))
-(global-set-key "\C-ca" 'org-agenda)
-
-
-;; ========= lsp server lsp-python-ms ==========
-(require 'lsp-python-ms)
-(setq lsp-python-ms-auto-install-server t)
-(add-hook 'python-mode-hook #'lsp) ; or lsp-deferred
-
-;; To set path of python executable, look at https://emacs-lsp.github.io/lsp-python-ms/#faq
-(setq lsp-python-ms-executable "~/venv/bin/pyls")
+;; add .dir-locals.el file to any python directory with the following line
+;; ((python-mode . ((lsp-python-ms-python-executable . "/.../bin/python"))))
+(add-hook 'hack-local-variables-hook
+      (lambda ()
+    (when (derived-mode-p 'python-mode)
+      (require 'lsp-python-ms)
+      (lsp)))) ; or lsp-deferred
 
 
-;; ========= git customizations ==========
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
-(setq ediff-split-window-function 'split-window-horizontally)
+;; Enable nice rendering of diagnostics like compile errors.
+(use-package flycheck
+  :init (global-flycheck-mode))
+
+(use-package company
+  :bind (:map company-active-map
+	      ("C-n" . company-select-next)
+	      ("C-p" . company-select-previous))
+  :config
+  (setq company-idle-delay 0.0)
+  (setq company-minimum-prefix-length 1)
+  (setq company-selection-wrap-around t)
+  (global-company-mode t))
+
+(add-to-list 'load-path "/home/pidubey/projects/software-config-files/emacs.d/packages/")
+
+(require 'init-cpp)
+
+(require 'init-org)
+(require 'init-git)
+(require 'init-python)
+
+(require 'init-scala)
 
 (provide 'init)
 ;;; init.el ends here
