@@ -56,12 +56,12 @@
       (require 'lsp-python-ms)
       (lsp)))) ; or lsp-deferred
 
-
 ;; Enable nice rendering of diagnostics like compile errors.
 (use-package flycheck
   :init (global-flycheck-mode))
 
 (use-package company
+  :init (global-company-mode)
   :bind (:map company-active-map
 	      ("C-n" . company-select-next)
 	      ("C-p" . company-select-previous))
@@ -72,6 +72,9 @@
   (global-company-mode t))
 
 (add-to-list 'load-path "/home/pidubey/projects/software-config-files/emacs.d/packages/")
+(require 'init-lsp)
+
+(require 'init-yasnippet)
 
 (require 'init-cpp)
 

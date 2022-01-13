@@ -2,23 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;; ======== lsp server scala ==============
-(use-package lsp-mode
-  ;; Optional - enable lsp-mode automatically in scala files
-  :hook
-  (scala-mode . lsp)
-  (lsp-mode . lsp-lens-mode)
-  :config
-  ;; Uncomment following section if you would like to tune lsp-mode performance according to
-  ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-  :custom
-  (gc-cons-threshold 100000000) ;; 100mb
-  ;;       (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  (lsp-idle-delay 0.600)
-  ;;       (setq lsp-log-io nil)
-  (lsp-completion-provider :capf)
-  (lsp-prefer-flymake nil))
-
 ;; Enable defer and ensure by default for use-package
 ;; Keep auto-save/backup files separate from source code:  https://github.com/scalameta/metals/issues/1027
 (setq use-package-always-defer t
